@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/attendline/">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Free attendance percentage calculator: enter attended and held classes to see your exact attendance %, how many classes you can still miss, or how many you must attend in a row to get back over 75%. Private, offline, stores nothing.">
+
+  <meta property="og:title" content="Attendance Percentage Calculator — How Many Classes Can You Miss?">
+  <meta property="og:description" content="See your exact attendance margin: how many classes you can miss, or must attend in a row to cross your cutoff. Truncated %, never rounded up. Free and private.">
+  <meta property="og:type" content="website">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="attendline">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>Attendance Percentage Calculator — How Many Classes Can You Miss? · attendline</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    :root { color-scheme: dark light; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+      font-feature-settings: "tnum"; }
+    #seo-landing { max-width: 760px; margin: 0 auto; padding: 24px 20px 8px; line-height: 1.55;
+      color: #F2F7F5; background: #102A2D; }
+    #seo-landing h1 { font-size: 1.55rem; color: #FF8A73; margin: 0 0 8px; line-height: 1.2; }
+    #seo-landing h2 { font-size: 1.08rem; margin: 22px 0 6px; color: #F2F7F5; }
+    #seo-landing p, #seo-landing li { color: #D8E4E1; }
+    #seo-landing code { background: rgba(255,255,255,0.10); padding: 1px 5px; border-radius: 4px;
+      font-feature-settings: "tnum"; }
+    #seo-landing a { color: #FF8A73; }
+    #flutter-app { height: 82vh; min-height: 520px; border-top: 3px solid #FF8A73; }
+    @media (prefers-color-scheme: light) {
+      #seo-landing { color: #143135; background: #F7FAF9; }
+      #seo-landing h1 { color: #C2492F; }
+      #seo-landing h2 { color: #143135; }
+      #seo-landing p, #seo-landing li { color: #33463F; }
+      #seo-landing code { background: rgba(0,0,0,0.06); }
+      #seo-landing a { color: #C2492F; }
+      #flutter-app { border-top-color: #C2492F; }
+    }
+  
+    .app-cta { margin: 18px 0 6px; display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; }
+    .app-cta a { display:inline-block; background:#FF8A73; color:#fff; text-decoration:none;
+      font-weight:700; padding:11px 20px; border-radius:8px; font-size:1rem; line-height:1.1; }
+    .app-cta a:hover { filter:brightness(1.08); }
+    .app-cta .note { font-size:0.85rem; opacity:0.82; }
+  </style>
+
+  <!-- Crawlable structured data: the Flutter canvas is not indexable, so the
+       facts live in real HTML + JSON-LD. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "attendline",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web, Windows, macOS, Linux, Android, iOS",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+    "description": "Enter attended and held classes per subject to see your exact attendance percentage, how many classes you can still miss, or how many you must attend consecutively to climb back over your attendance cutoff."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I calculate my attendance percentage?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Divide classes attended by classes held and multiply by 100. attendline works in integer basis points and truncates the displayed percentage to two decimals — it never rounds up — so the number shown is at most 0.01 below the exact value and never overstates how safe you are." }
+      },
+      {
+        "@type": "Question",
+        "name": "How many classes can I miss and stay above 75%?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The largest number of future classes m such that attended divided by (held + m) is still at least your cutoff. For example, at 68 attended of 80 held with a 75% cutoff you can miss 10 more (68/90 = 75.55%, but 68/91 = 74.72%). attendline computes this with exact integer cross-multiplication, not the rounded percentage." }
+      },
+      {
+        "@type": "Question",
+        "name": "What if I am already below 75%?",
+        "acceptedAnswer": { "@type": "Answer", "text": "attendline shows how many classes you must attend consecutively (missing none) to climb back to the cutoff. For 50 attended of 72 held at 75%, you must attend 16 in a row (66/88 = 75.00%). If the cutoff can no longer be reached this term, it says so instead of showing a false number." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is 75% attendance a real rule, and does my college allow condonation?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Indian regulators describe a 75% minimum-attendance norm for exam eligibility (see the University Grants Commission regulations at ugc.gov.in, referenced as descriptive context, verified_on 2026-07-24). But the actual cutoff, condonation limits, medical waivers, and rounding are set by YOUR institution and vary widely. attendline treats 75% only as an editable default and certifies nothing — ask your college for its exact rule." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my data private?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The full app is local-first: your data lives in a SQLite file on your own machine and runs on localhost. This web demo stores nothing on any server — every number you type stays in your browser tab and makes no network calls." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <main id="seo-landing">
+    <h1>Attendance Percentage Calculator — How Many Classes Can You Miss?</h1>
+    <p><strong>attendline</strong> makes the 75% line visible. Enter how many
+    classes you have <strong>attended</strong> and how many were <strong>held</strong>,
+    and it shows your exact attendance percentage, <strong>how many classes you can
+    still miss</strong>, or <strong>how many you must attend in a row</strong> to get
+    back over your cutoff. The percentage is <strong>truncated, never rounded up</strong>,
+    so it never overstates how safe you are.</p>
+  <div class="app-cta">
+    <a href="mailto:sadhu.sreenivas@gmail.com?subject=Waitlist%3A%20attendline%20full%20app&body=Please%20notify%20me%20when%20the%20full%20offline%20attendline%20app%20is%20available.">Get the full app — join the waitlist →</a>
+    <span class="note">Full offline app coming soon. The demo below is free to use now.</span>
+  </div>
+
+
+    <h2>The two formulas</h2>
+    <ul>
+      <li><strong>Can-miss</strong>: the largest number of future classes
+      <code>m</code> where <code>attended &divide; (held + m)</code> is still at least
+      your cutoff.</li>
+      <li><strong>Must-attend</strong>: the smallest run of classes <code>k</code>
+      (attending every one) where <code>(attended + k) &divide; (held + k)</code> first
+      reaches your cutoff.</li>
+    </ul>
+    <p>Both use exact integer cross-multiplication — <code>attended &times; 10000 &ge;
+    cutoff_bp &times; held</code> — never the rounded display number.</p>
+
+    <h2>Worked example</h2>
+    <p>You have attended <code>68</code> of <code>80</code> classes: that is
+    <code>85.00%</code>. At a 75% cutoff you can miss <code>10</code> more
+    (<code>68/90 = 75.55%</code>, but <code>68/91 = 74.72%</code>). A subject at
+    <code>50/72</code> is <code>69.44%</code> — below the line — so you would need
+    to attend <code>16</code> in a row to reach <code>66/88 = 75.00%</code>.</p>
+
+    <h2>Honest limits</h2>
+    <p>Your college's rules win. Cutoffs, condonation, and medical waivers vary by
+    institution; attendline computes arithmetic, it does not certify eligibility.
+    Every class counts equally here. It is framed as attendance <em>safety</em> — it
+    shows your margin, it does not encourage using it.</p>
+
+    <h2>Try it below</h2>
+    <p>The calculator below is loaded with a sample semester. Edit it or add your
+    own subjects — nothing you type leaves this page.</p>
+  </main>
+
+  <div id="flutter-app"></div>
+
+    <script src="flutter.js" defer></script>
+  <!-- buildConfig is injected here at build time from the generated flutter_bootstrap.js
+       (ship-app.sh / build-web.sh). Without it the loader throws "requires _flutter.buildConfig". -->
+  <script>window._flutter=window._flutter||{};_flutter.buildConfig = {"engineRevision":"c416acfeb8126e097f758c664aaa3da929e27da0","builds":[{"compileTarget":"dart2js","renderer":"canvaskit","mainJsPath":"main.dart.js"},{}]};</script>
+  <script>
+    window.addEventListener("load", function () {
+      _flutter.loader.load({ config: { hostElement: document.getElementById("flutter-app") } });
+    });
+  </script>
+</body>
+</html>
